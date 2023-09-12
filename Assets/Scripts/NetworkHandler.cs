@@ -11,7 +11,6 @@ public class NetworkHandler : NetworkBehaviour
     {
         NetworkManager.Singleton.OnClientStarted += OnClientStarted;
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
-
     }
 
     private bool hasPrinted = false;
@@ -43,26 +42,34 @@ public class NetworkHandler : NetworkBehaviour
     }
 
     //------ Client Actions ------//
+
+    //When a client connects...
     private void OnClientStarted(){
-        Debug.Log("!! Server Started - Client !!");
+        //Display this text
+        Debug.Log("!! Client Connected !!");
+
+        //When a client connects to the server, run ClientOnClientConnected();
         NetworkManager.OnClientConnectedCallback += ClientOnClientConnected;
+
+        //When a client disconnects from the server, run ClientOnClientDisconnected();
         NetworkManager.OnClientDisconnectCallback += ClientOnClientDicsonnected;
+
+        //When the server stops running, run ClientOnClientStopped();
         NetworkManager.OnServerStopped += ClientOnClientStopped;
+
+        //Display needed text
         PrintMe();
     }
 
     private void ClientOnClientConnected(ulong clientId){
         PrintMe();
         //Print: I {clientId} have connected to the server
-        Debug.Log($"Client{clientId} has connected to the server");
-
-        //handle the case when we are the client running on the host
-        //some other client connected
+        Debug.Log($"I {clientId} have connected to the server");
     }
 
     private void ClientOnClientDicsonnected(ulong clientId){
         //Print: I {clientId} have disconnected to the server
-        Debug.Log($"Client {clientId} has disconnected to the server");
+        Debug.Log($"I {clientId} have disconnected from the server");
     }
 
     private void ClientOnClientStopped(bool indicator){
@@ -73,11 +80,22 @@ public class NetworkHandler : NetworkBehaviour
         NetworkManager.OnServerStopped -= ClientOnClientStopped;}
 
     //------ Server Actions ------//
+    
+    //When the server starts...
     private void OnServerStarted(){
-        Debug.Log("!! Server Started - Server!!");
+        //Display this text
+        Debug.Log("!! Server Started !!");
+
+        //When a client connects to the server, run ServerOnClientConnected();
         NetworkManager.OnClientConnectedCallback += ServerOnClientConnected;
+
+        //When a client disconnects from the server, run ServerOnClientDisconnected();
         NetworkManager.OnClientDisconnectCallback += ServerOnClientDicsonnected;
+
+        //When the server stops running, run ServerOnServerStopped();
         NetworkManager.OnServerStopped += ServerOnServerStopped;
+
+        //Display needed text
         PrintMe();}
 
     private void ServerOnClientConnected(ulong clientId){
@@ -92,4 +110,40 @@ public class NetworkHandler : NetworkBehaviour
         NetworkManager.OnClientConnectedCallback -= ServerOnClientConnected;
         NetworkManager.OnClientDisconnectCallback -= ServerOnClientDicsonnected;
         NetworkManager.OnServerStopped -= ServerOnServerStopped;}
+
+    //------ Host Actions ------//
+
+    //When the host starts...
+    private void OnHostStarted(){
+        //Display this text
+        Debug.Log("!! Host Started !!");
+
+        //When a client connectes to the host, run HostOnClientConnected;
+        NetworkManager.OnClientConnectedCallback += HostOnClientConnected;
+
+        //When a client disconnectes from the host, run HostOnClientDisconnected;
+        NetworkManager.OnClientConnectedCallback += HostOnClientDisconnected;
+
+        //When the server stopps running, run HostOnHostStopped();
+        NetworkManager.OnServerStopped += HostOnHostStopped;
+
+        //Display needed text
+        PrintMe();
+    }
+    
+    private void HostOnClientConnected(ulong clientId){
+        Debug.Log($"Client {clientId} connected to the server");
+    }
+
+    private void HostOnClientDisconnected(ulong clientId){
+        Debug.Log($"Client {clientId} disconnected to the server");
+    }
+
+    private void HostOnHostStopped(bool indicator){
+        Debug.Log("!! Server Stopped - Server !!");
+        hasPrinted = false;
+        NetworkManager.OnClientConnectedCallback -= HostOnClientConnected;
+        NetworkManager.OnClientDisconnectCallback -= HostOnClientDisconnected;
+        NetworkManager.OnServerStopped -= HostOnHostStopped;
+    }
 }
