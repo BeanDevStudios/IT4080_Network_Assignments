@@ -5,8 +5,8 @@ using Unity.Netcode;
 
 public class Game1game : NetworkBehaviour
     {
-        public Player playerHostPrefab;
-        public Player playerClientPrefab;
+        public Player hostPrefab;
+        public Player playerPrefab;
         public Camera arenaCamera;
 
         private int positionIndex = 0;
@@ -63,16 +63,18 @@ public class Game1game : NetworkBehaviour
         {
             foreach(ulong clientId in NetworkManager.ConnectedClientsIds)
             {
-                if(IsHost){
-                Player playerHostSpawn = Instantiate(playerHostPrefab, Vector3.zero, Quaternion.identity);
-                playerHostSpawn.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-                playerHostSpawn.playerColorNetVar.Value = NextColor();
+                Player prefab = playerPrefab;
+                if(clientId == NetworkManager.LocalClientId){
+                    prefab = hostPrefab;
                 }
-                else{
-                Player playerClientSpawn = Instantiate(playerClientPrefab, Vector3.zero, Quaternion.identity);
-                playerClientSpawn.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-                playerClientSpawn.playerColorNetVar.Value = NextColor();
-                }
+
+                Player playerSpawn = Instantiate(
+                    prefab,
+                    NextPosition(),
+                    Quaternion.identity);
+
+                playerSpawn.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+                playerSpawn.playerColor.Value = NextColor()
             }
         }
     }

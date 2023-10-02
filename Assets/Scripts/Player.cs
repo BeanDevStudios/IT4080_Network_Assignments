@@ -13,20 +13,38 @@ public class Player : NetworkBehaviour
     private Camera playerCamera;
     private GameObject cube;
 
-    private void Start(){
+    private void NetworkInit(){
+        playerBody = transform.Find("PlayerBody").gameObject;
         playerCamera = transform.Find("Camera").GetComponent<Camera>();
         playerCamera.enabled = IsOwner;
         playerCamera.GetComponent<AudioListener>().enabled = IsOwner;
-
-        cube = transform.Find("Cube").gameObject;
-        ApplyColor();
-    }
-
-    private void Update(){
-        if (IsOwner){
-        OwnerHandleInput();
+        ApplyPlayerColor();
+        PlayerColor.OnValueChanged += OnPlayerColorChanged;
         }
-    }
+
+    private void Awake(){
+         NetworkHelper.Log(this, "Awake");
+         }
+
+    void Start(){
+        NetworkHelper.Log(this, "Start");
+        }
+
+    public override void OnNetworkSpawn(){
+         NetworkHelper.Log(this, "OnNetworkSpawn");
+        NetworkInit();
+        base.OnNetworkSpawn();
+        }
+
+    void Update(){
+        if (IsOwner){
+        OwnerHandleInput();}
+        }
+
+    public void OnPlayerColorChanged(Color previous, Color current){
+        ApplyPlayerColor();
+        }
+
     private void OwnerHandleInput(){
         
         Vector3 movement = CalcMovement();
@@ -34,9 +52,10 @@ public class Player : NetworkBehaviour
         if(movement != Vector3.zero || rotation != Vector3.zero){
             MoveServerRpc(CalcMovement(), CalcRotation());
         }   
-    }
+        }
 
-    private void ApplyColor(){
+    private void ApplyPlayerColor(){
+        NetworkHelper.Log(this, $"Applying color{PlayerColor.Value}")
         cube.GetComponent<MeshRenderer>().material.color = playerColorNetVar.Value;
     }
 
@@ -56,7 +75,6 @@ public class Player : NetworkBehaviour
         }
         return rotVect;
     }
-
 
     // Move up and back, and strafe when shift is pressed
     private Vector3 CalcMovement() {
