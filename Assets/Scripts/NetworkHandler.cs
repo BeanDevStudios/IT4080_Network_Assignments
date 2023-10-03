@@ -9,21 +9,20 @@ public class NetworkHandler : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NetworkManager.Singleton.OnClientStarted += OnClientStarted;
-        NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+        NetworkManager.OnClientStarted += OnClientStarted;
+        NetworkManager.OnServerStarted += OnServerStarted;
     }
 
     private void PrintMe()
     {
         if(IsServer){
-            NetworkHelper.Log($"I AM a Server! {NetworkManager.ServerClientId}")
-            }
+            NetworkHelper.Log($"I AM a Server! {NetworkManager.ServerClientId}");}
         if(IsHost){
             NetworkHelper.Log($"I AM a Host! {NetworkManager.ServerClientId}/{NetworkManager.LocalClientId}");}
         if(IsClient){
             NetworkHelper.Log($"I AM a Client! {NetworkManager.LocalClientId}");}
         if(!IsServer && !IsClient){
-            NetworkHelper.Log("I AM Nothing Yet");}
+            NetworkHelper.Log("I AM Nothing yet");}
     }
 
     //------ Client Actions ------//
@@ -51,10 +50,25 @@ public class NetworkHandler : NetworkBehaviour
         NetworkManager.OnServerStopped -= ClientOnClientStopped;
         PrintMe();}
     private void ClientOnClientConnected(ulong clientId){
-        NetworkHelper.Log($"I have connected {clientId}");}
+        NetworkHelper.Log($"I have connected {clientId}");
+        
+        if(IsHost){
+            NetworkHelper.Log($"Client {clientId} connected to the server");
+        }
+    }
         //FIX THIS METHOD
+        //IsClient();
+        //IsServer();
+        //IsHost();
+        //NetworkManager.clientId
+        //NetworkManager.LocalClientId
+        //NetworkManager.ServerClientId
     private void ClientOnClientDicsonnected(ulong clientId){
-        NetworkHelper.Log($"I have disconnected {clientId}");}
+        NetworkHelper.Log($"I have disconnected {clientId}");
+        if(IsHost){
+            NetworkHelper.Log($"Client {clientId} disconnected from the server");
+        }
+    }
         //FIX THIS METHOD
 
     

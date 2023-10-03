@@ -12,7 +12,7 @@ public class LobbyManager : NetworkBehaviour
         void Start()
         {
             startButton.gameObject.SetActive(false);
-            statusLabel.text = "Start Something";
+            statusLabel.text = "Start Game";
 
             startButton.onClick.AddListener(OnStartButtonClicked);
 
@@ -22,10 +22,10 @@ public class LobbyManager : NetworkBehaviour
 
         private void OnServerStarted()
         {   
-            StartGame();
+            //StartGame();
             //Removing start button for now
-            //startButton.gameObject.SetActive(true);
-            //statusLabel.text = "Press Start";
+            startButton.gameObject.SetActive(true);
+            statusLabel.text = "Press Start";
         }
 
         private void OnClientStarted()
@@ -43,6 +43,6 @@ public class LobbyManager : NetworkBehaviour
 
         public void StartGame()
         {
-            NetworkManager.SceneManager.LoadScene("TestChat",UnityEngine.SceneManagement.LoadSceneMode.Single);
+            NetworkManager.SceneManager.LoadScene("Game1",UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
     }

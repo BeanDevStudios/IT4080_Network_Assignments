@@ -411,7 +411,7 @@ GameObject:
   - component: {fileID: 2022930764}
   - component: {fileID: 2022930763}
   m_Layer: 0
-  m_Name: Game1 Object
+  m_Name: ObjectObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -449,8 +449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5f46633fa1eb04479dfeeb8dd2daa77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHostPrefab: {fileID: 5037626298985710472, guid: d0587eccb30212e4bbc5976c94754558, type: 3}
-  playerClientPrefab: {fileID: 5037626298985710472, guid: 0c71b32c5bc621d49af4af19a1d2c032, type: 3}
+  hostPrefab: {fileID: 5037626298985710472, guid: d0587eccb30212e4bbc5976c94754558, type: 3}
+  playerPrefab: {fileID: 5037626298985710472, guid: 0c71b32c5bc621d49af4af19a1d2c032, type: 3}
   arenaCamera: {fileID: 324648410}
 --- !u!4 &2022930765
 Transform:

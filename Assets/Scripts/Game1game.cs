@@ -74,7 +74,7 @@ public class Game1game : NetworkBehaviour
                     Quaternion.identity);
 
                 playerSpawn.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-                playerSpawn.playerColor.Value = NextColor()
+                playerSpawn.playerColor.Value = NextColor();
             }
         }
     }

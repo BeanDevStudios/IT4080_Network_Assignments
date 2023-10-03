@@ -8,21 +8,21 @@ public class Player : NetworkBehaviour
 {
     public float movementSpeed = 50f;
     public float rotationSpeed = 130f;
-    public NetworkVariable<Color> playerColorNetVar = new NetworkVariable<Color>(Color.red);
+    public NetworkVariable<Color> playerColor = new NetworkVariable<Color>(Color.red);
 
     private Camera playerCamera;
     private GameObject cube;
 
     private void NetworkInit(){
-        playerBody = transform.Find("PlayerBody").gameObject;
+        cube = transform.Find("ObjectObject").gameObject;
         playerCamera = transform.Find("Camera").GetComponent<Camera>();
         playerCamera.enabled = IsOwner;
         playerCamera.GetComponent<AudioListener>().enabled = IsOwner;
         ApplyPlayerColor();
-        PlayerColor.OnValueChanged += OnPlayerColorChanged;
+        playerColor.OnValueChanged += OnPlayerColorChanged;
         }
 
-    private void Awake(){
+    void Awake(){
          NetworkHelper.Log(this, "Awake");
          }
 
@@ -31,7 +31,7 @@ public class Player : NetworkBehaviour
         }
 
     public override void OnNetworkSpawn(){
-         NetworkHelper.Log(this, "OnNetworkSpawn");
+        NetworkHelper.Log(this, "OnNetworkSpawn");
         NetworkInit();
         base.OnNetworkSpawn();
         }
@@ -55,11 +55,11 @@ public class Player : NetworkBehaviour
         }
 
     private void ApplyPlayerColor(){
-        NetworkHelper.Log(this, $"Applying color{PlayerColor.Value}")
-        cube.GetComponent<MeshRenderer>().material.color = playerColorNetVar.Value;
+        NetworkHelper.Log(this, $"Applying color{playerColor.Value}");
+        cube.GetComponent<MeshRenderer>().material.color = playerColor.Value;
     }
 
-    [ServerRpc(RequireOwnership = true)]
+    [ServerRpc]
     private void MoveServerRpc(Vector3 movement, Vector3 rotation){
         transform.Translate(movement);
         transform.Rotate(rotation);

@@ -63,7 +63,7 @@ public class NetworkHelper : MonoBehaviour
     }
 
     public static void Log(NetworkBehaviour what, string msg){
-        ulong ownerId = what.GetComponent<NetworkObject>().OwnerCLientId;
+        ulong ownerId = what.GetComponent<NetworkObject>().OwnerClientId;
         Debug.Log($"[{GetNetworkMode()} {netMgr.LocalClientId}][{what.GetType().Name} {ownerId}]:  {msg}");
     }
 }

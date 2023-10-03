@@ -34,7 +34,7 @@ Transform:
   - {fileID: 8383874858604298521}
   - {fileID: 4659279408970633062}
   m_Father: {fileID: 3325394693002782430}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &3120005530058411084
 MeshFilter:
@@ -318,13 +318,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4465849521551842547}
-  m_LocalRotation: {x: 0.14684273, y: 0, z: 0, w: 0.9891599}
-  m_LocalPosition: {x: 0.136, y: 1.433, z: -1.695}
+  m_LocalRotation: {x: 0.14684273, y: -0, z: -0, w: 0.9891599}
+  m_LocalPosition: {x: 0.136, y: 1.4330001, z: -1.695}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3325394693002782430}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 16.888, y: 0, z: 0}
 --- !u!20 &2295343614291583063
 Camera:
@@ -408,8 +408,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5658422853392264505}
   - {fileID: 3167541253827098411}
+  - {fileID: 5658422853392264505}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -427,7 +427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 50
   rotationSpeed: 130
-  playerColorNetVar:
+  playerColor:
     m_InternalValue: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &5464395791525614333
 MonoBehaviour:

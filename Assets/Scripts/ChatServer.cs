@@ -107,5 +107,6 @@ public class ChatServer : NetworkBehaviour
 
         RecieveChatMessageClientRpc($" {message}", from, rpcParams);
 
+
     }
 }
