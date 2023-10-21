@@ -42,35 +42,30 @@ public class NetworkHandler : NetworkBehaviour
 
         //Display needed text
         PrintMe();}
-
     private void ClientOnClientStopped(bool indicator){
         NetworkHelper.Log("!! Server Stopped - Client !!");
         NetworkManager.OnClientConnectedCallback -= ClientOnClientConnected;
         NetworkManager.OnClientDisconnectCallback -= ClientOnClientDicsonnected;
         NetworkManager.OnServerStopped -= ClientOnClientStopped;
         PrintMe();}
-    private void ClientOnClientConnected(ulong clientId){
-        NetworkHelper.Log($"I have connected {clientId}");
-        
-        if(IsHost){
-            NetworkHelper.Log($"Client {clientId} connected to the server");
+    private void ClientOnClientConnected(ulong clientId)
+    {
+        if(clientId != NetworkManager.LocalClientId)
+        {
+            //NetworkHelper.Log($"{clientId} has connected to the server");
         }
+        else
+        {
+            NetworkHelper.Log($"I have connected {clientId}");
+        }
+
     }
-        //FIX THIS METHOD
-        //IsClient();
-        //IsServer();
-        //IsHost();
-        //NetworkManager.clientId
-        //NetworkManager.LocalClientId
-        //NetworkManager.ServerClientId
     private void ClientOnClientDicsonnected(ulong clientId){
         NetworkHelper.Log($"I have disconnected {clientId}");
         if(IsHost){
             NetworkHelper.Log($"Client {clientId} disconnected from the server");
         }
     }
-        //FIX THIS METHOD
-
     
     //------ Server Actions ------//
     //When the server starts...

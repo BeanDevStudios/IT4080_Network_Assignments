@@ -14,10 +14,12 @@ public class Player : NetworkBehaviour
     private GameObject cube;
 
     private void NetworkInit(){
-        cube = transform.Find("ObjectObject").gameObject;
+    
         playerCamera = transform.Find("Camera").GetComponent<Camera>();
         playerCamera.enabled = IsOwner;
         playerCamera.GetComponent<AudioListener>().enabled = IsOwner;
+
+        cube = transform.Find("PlayerBody").gameObject;
         ApplyPlayerColor();
         playerColor.OnValueChanged += OnPlayerColorChanged;
         }
@@ -30,39 +32,55 @@ public class Player : NetworkBehaviour
         NetworkHelper.Log(this, "Start");
         }
 
-    public override void OnNetworkSpawn(){
+    public override void OnNetworkSpawn()
+    {
         NetworkHelper.Log(this, "OnNetworkSpawn");
         NetworkInit();
         base.OnNetworkSpawn();
-        }
+    }
 
     void Update(){
         if (IsOwner){
         OwnerHandleInput();}
-        }
-
-    public void OnPlayerColorChanged(Color previous, Color current){
-        ApplyPlayerColor();
-        }
-
-    private void OwnerHandleInput(){
-        
+    }
+    private void OwnerHandleInput()
+    {
         Vector3 movement = CalcMovement();
         Vector3 rotation = CalcRotation();
-        if(movement != Vector3.zero || rotation != Vector3.zero){
-            MoveServerRpc(CalcMovement(), CalcRotation());
+        if(movement != Vector3.zero || rotation != Vector3.zero)
+        {
+            MoveServerRpc(CalcMovement(), CalcRotation(), !IsHost);
         }   
+    }
+
+        
+    [ServerRpc]
+    private void MoveServerRpc(Vector3 movement, Vector3 rotation, bool border){
+        transform.Translate(movement);
+        transform.Rotate(rotation);
+
+        if (border)
+        {
+            Vector3 offset = Vector3.zero;
+            if (transform.position.x > 25.0) offset.x = 25 - transform.position.x;
+            else if (transform.position.x < -25.0) offset.x = -25 - transform.position.x;
+            if (transform.position.z > 25.0) offset.z = 25 - transform.position.z;
+            else if (transform.position.z < -25.0) offset.z = -25 - transform.position.z;
+            transform.Translate(offset, Space.World);
         }
+    }
+    [ServerRpc]
+    private void ApplyOffsetServerRpc(Vector3 offset)
+    {
+        transform.Translate(offset, Space.World);
+    }
+    public void OnPlayerColorChanged(Color previous, Color current){
+        ApplyPlayerColor();
+    }
 
     private void ApplyPlayerColor(){
         NetworkHelper.Log(this, $"Applying color{playerColor.Value}");
         cube.GetComponent<MeshRenderer>().material.color = playerColor.Value;
-    }
-
-    [ServerRpc]
-    private void MoveServerRpc(Vector3 movement, Vector3 rotation){
-        transform.Translate(movement);
-        transform.Rotate(rotation);
     }
 
     // Rotate around the y axis when shift is not pressed

@@ -8,6 +8,7 @@ public class ChatServer : NetworkBehaviour
     public ChatUi chatUi;
     const ulong SYSTEM_ID = ulong.MaxValue;
     private ulong[] dmClientIds = new ulong[2];
+    private ulong[] playerClientId = new ulong[1];
 
     void Start()
     {
@@ -17,6 +18,7 @@ public class ChatServer : NetworkBehaviour
         if(IsServer)
         {
             NetworkManager.OnClientConnectedCallback += ServerOnClientConnected;
+            NetworkManager.OnClientDisconnectCallback += ServerOnClientDisconnected;
             if(IsHost)
             {
                 DisplayMessageLocally(SYSTEM_ID, $"You are the host AND client {NetworkManager.LocalClientId}");
@@ -34,19 +36,17 @@ public class ChatServer : NetworkBehaviour
 
     private void ServerOnClientConnected(ulong clientId)
     {
-        //Notify all when client connected
-        DisplayMessageLocally(SYSTEM_ID, $"Client {clientId} has joined the game");
-        
-        if (IsHost)
-        {
-            ServerSendDirectMessage($"{clientId} connected to the server", NetworkManager.LocalClientId, SYSTEM_ID);
-            //DisplayMessageLocally(SYSTEM_ID, $"Client {clientId} has joined the game");
-        }
+        ClientRpcParams rpcParams = default;
+        playerClientId[0] = clientId;
+        rpcParams.Send.TargetClientIds = playerClientId;
+        RecieveChatMessageClientRpc($"I ({NetworkManager.LocalClientId}) see you ({clientId}) have connected to the server, well done", SYSTEM_ID, rpcParams);
+        SendChatMessageServerRpc($"New client ({clientId}) has connected to the server. Say hello!");
     }
 
     private void ServerOnClientDisconnected(ulong clientId)
     {
         //notify all when client disconnects
+        SendChatMessageServerRpc($"Client ({clientId}) has disconnected from the server.");
     }
 
     private void DisplayMessageLocally(ulong from, string message)
@@ -80,15 +80,23 @@ public class ChatServer : NetworkBehaviour
         {
             string[] parts = message.Split(" ");
             string clientIdStr = parts[0].Replace("@","");
-            ulong toClientId = ulong.Parse(clientIdStr);
-            
-            ServerSendDirectMessage(message, serverRpcParams.Receive.SenderClientId, toClientId);
+            ulong toClientId;
+            if(ulong.TryParse(clientIdStr, out toClientId))
+            {
+                ServerSendDirectMessage(message, serverRpcParams.Receive.SenderClientId, toClientId);
+            }
+            else
+            {
+                ClientRpcParams rpcParams = default;
+                playerClientId[0] = serverRpcParams.Receive.SenderClientId;
+                rpcParams.Send.TargetClientIds = playerClientId;
+                RecieveChatMessageClientRpc($"client Id ({clientIdStr}) is not a valid client id.", SYSTEM_ID, rpcParams);
+            }
         }
         else
         {
             RecieveChatMessageClientRpc(message,serverRpcParams.Receive.SenderClientId);
         }
-        RecieveChatMessageClientRpc(message,serverRpcParams.Receive.SenderClientId);
     }
 
     [ClientRpc]
@@ -99,13 +107,31 @@ public class ChatServer : NetworkBehaviour
 
     private void ServerSendDirectMessage (string message, ulong from, ulong to)
     {
-        dmClientIds[0] = from;
-        dmClientIds[1] = to;
+        bool connected = false;
+        ClientRpcParams rpcParams = default;
+        foreach(ulong clientId in NetworkManager.ConnectedClientsIds)
+        {
+            if(clientId == to)
+            {
+                connected = true;
+                break;
+            }
+        }
 
-        ClientRpcParams rpcParams= default;
-        rpcParams.Send.TargetClientIds = dmClientIds;
+        if(connected)
+        {
+            dmClientIds[0] = from;
+            dmClientIds[1] = to;
+            rpcParams.Send.TargetClientIds = dmClientIds;
 
-        RecieveChatMessageClientRpc($" {message}", from, rpcParams);
+             RecieveChatMessageClientRpc($" {message}", from, rpcParams);
+        }
+        else
+        {
+            playerClientId[0] = from;
+            rpcParams.Send.TargetClientIds = playerClientId;
+            RecieveChatMessageClientRpc($"client Id ({to}) is not currently connected.", SYSTEM_ID, rpcParams);
+        }
 
 
     }

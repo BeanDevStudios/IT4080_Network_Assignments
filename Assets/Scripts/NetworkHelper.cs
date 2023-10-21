@@ -24,13 +24,9 @@ public class NetworkHelper : MonoBehaviour
         }
 
         string mode = GetNetworkMode();
-        if(GUILayout.Button($"Shutdown {mode}")){ netMgr.Shutdown();
-        }
+        if (GUILayout.Button($"Shutdown {mode}")) netMgr.Shutdown();
         GUILayout.Label($"Transport: {transportTypeName} [{serverPort}]");
-        GUILayout.Label($"Mode: {mode}");
-        if(netMgr.IsClient){
-            GUILayout.Label($"ClientID = {netMgr.LocalClientId}");
-        }
+        GUILayout.Label("Mode: " + mode);
     }
 
     public static void GUILayoutNetworkControls()
@@ -46,16 +42,8 @@ public class NetworkHelper : MonoBehaviour
     }
 
     public static string GetNetworkMode(){
-        string type = "client";
-        if(netMgr.IsServer){
-            if(netMgr.IsHost){
-                type = "host";
-            }
-            else{
-                type = "server";
-            }
-        }
-        return type;
+        
+        return netMgr.IsHost ? "Host" : netMgr.IsServer ? "Server" : "Client";
     }
 
     public static void Log(string msg){

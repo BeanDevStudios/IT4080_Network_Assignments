@@ -26,6 +26,16 @@ public class Game1game : NetworkBehaviour
             Color.yellow,
             Color.magenta,
         };
+
+        void Start()
+        {
+            arenaCamera.enabled = !IsClient;
+            arenaCamera.GetComponent<AudioListener>().enabled = !IsClient;
+            if(IsServer)
+            {
+                SpawnPlayers();
+            }
+        }
     
         private Color NextColor() 
         {
@@ -36,16 +46,6 @@ public class Game1game : NetworkBehaviour
                 colorIndex = 0;
             }
             return newColor;
-        }
-
-        void Start()
-        {
-            arenaCamera.enabled = !IsClient;
-            arenaCamera.GetComponent<AudioListener>().enabled = !IsClient;
-            if(IsServer)
-            {
-                SpawnPlayers();
-            }
         }
 
         private Vector3 NextPosition() 
