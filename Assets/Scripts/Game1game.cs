@@ -73,7 +73,7 @@ public class Game1game : NetworkBehaviour
                     NextPosition(),
                     Quaternion.identity);
 
-                playerSpawn.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+                playerSpawn.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
                 playerSpawn.playerColor.Value = NextColor();
             }
         }

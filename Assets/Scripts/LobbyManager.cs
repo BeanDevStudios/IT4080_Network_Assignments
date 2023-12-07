@@ -16,14 +16,14 @@ public class LobbyManager : NetworkBehaviour
         startButton.onClick.AddListener(OnStartButtonClicked);
 
         startButton.gameObject.SetActive(false);
-        statusLabel.text = "Start Client/Host/Server";
+        statusLabel.text = "Start Game";
     }
 
     private void OnServerStarted() {
         //StartGame();
-        //startButton.gameObject.SetActive(true);
-        //statusLabel.text = "Press Start";
-        GotoLobby();
+        startButton.gameObject.SetActive(true);
+        statusLabel.text = "Press Start";
+        //GotoLobby();
     }
 
     private void OnClientStarted() {
@@ -46,7 +46,7 @@ public class LobbyManager : NetworkBehaviour
     private void StartGame()
     {
         NetworkManager.SceneManager.LoadScene(
-            "Arena1Game",
+            "Game1",
             UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 
