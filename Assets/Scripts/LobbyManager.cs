@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class LobbyManager : NetworkBehaviour
 {
     public Button startButton;
+    public Button lobbyButton;
     public TMPro.TMP_Text statusLabel;
 
     void Start()
@@ -14,6 +15,7 @@ public class LobbyManager : NetworkBehaviour
         NetworkManager.OnClientStarted += OnClientStarted;
         NetworkManager.OnServerStarted += OnServerStarted;
         startButton.onClick.AddListener(OnStartButtonClicked);
+        lobbyButton.onClick.AddListener(OnLobbyButtonClicked);
 
         startButton.gameObject.SetActive(false);
         statusLabel.text = "Start Game";
@@ -23,7 +25,7 @@ public class LobbyManager : NetworkBehaviour
         //StartGame();
         startButton.gameObject.SetActive(true);
         statusLabel.text = "Press Start";
-        //GotoLobby();
+        
     }
 
     private void OnClientStarted() {
@@ -35,6 +37,10 @@ public class LobbyManager : NetworkBehaviour
     private void OnStartButtonClicked()
     {
         StartGame();
+    }
+
+    private void OnLobbyButtonClicked(){
+        GotoLobby();    
     }
 
     public void GotoLobby() {
